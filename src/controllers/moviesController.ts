@@ -53,6 +53,7 @@ async function updateUnique(req: Request, res: Response) {
 async function deleteUnique(req: Request, res: Response) {
   const { id } = req.params;
 
+  await MoviesRepository.deleteMoviesOnPlatforms(parseInt(id));
   const deletedMovie = await MoviesRepository.deleteMovie(parseInt(id));
 
   if (deletedMovie.rowCount === 0)

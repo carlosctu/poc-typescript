@@ -63,7 +63,19 @@ function updateMovie(id, movie) {
 function deleteMovie(id) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, connection.query("DELETE FROM movies WHERE id = $1;", [id])];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, deleteMoviesOnPlatforms(id)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/, connection.query("DELETE FROM movies WHERE id = $1;", [id])];
+            }
+        });
+    });
+}
+function deleteMoviesOnPlatforms(id) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, connection.query("DELETE FROM movie_platforms WHERE id = $1;", [id])];
         });
     });
 }
@@ -81,4 +93,4 @@ function getMoviesByStreamingPlatform(platformId) {
         });
     });
 }
-export { insertMovie, getAllMovies, updateMovie, deleteMovie, addMovieIntoPlatform, getMoviesByStreamingPlatform, };
+export { insertMovie, getAllMovies, updateMovie, deleteMovie, deleteMoviesOnPlatforms, addMovieIntoPlatform, getMoviesByStreamingPlatform, };

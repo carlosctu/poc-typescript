@@ -43,6 +43,12 @@ async function deleteMovie(id: number): Promise<QueryResult<MovieEntity>> {
   return connection.query(`DELETE FROM movies WHERE id = $1;`, [id]);
 }
 
+async function deleteMoviesOnPlatforms(
+  id: number
+): Promise<QueryResult<MovieEntity>> {
+  return connection.query(`DELETE FROM movie_platforms WHERE movie_id = $1;`, [id]);
+}
+
 async function addMovieIntoPlatform(
   movie_id: number,
   platform_id: number
@@ -72,6 +78,7 @@ export {
   getAllMovies,
   updateMovie,
   deleteMovie,
+  deleteMoviesOnPlatforms,
   addMovieIntoPlatform,
   getMoviesByStreamingPlatform,
 };
