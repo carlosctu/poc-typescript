@@ -38,19 +38,27 @@ import * as MoviesRepository from "../repositories/moviesRepository.js";
 import { movieSchema } from "../schemas/movieSchema.js";
 function insertUnique(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var movie, validation, errors;
+        var movie, validation, errors, newMovie;
         return __generator(this, function (_a) {
-            movie = req.body;
-            validation = movieSchema.insertMovie.validate(movie, {
-                abortEarly: false
-            });
-            if (validation.error) {
-                errors = validation.error.details.map(function (error) { return error.message; });
-                res.status(422).send({ message: errors });
-                return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    movie = req.body;
+                    validation = movieSchema.insertMovie.validate(movie, {
+                        abortEarly: false
+                    });
+                    if (validation.error) {
+                        errors = validation.error.details.map(function (error) { return error.message; });
+                        res.status(422).send({ message: errors });
+                        return [2 /*return*/];
+                    }
+                    return [4 /*yield*/, MoviesRepository.insertMovie(movie)];
+                case 1:
+                    newMovie = _a.sent();
+                    movie.platforms.map(function (platform) {
+                        MoviesRepository.addMovieIntoPlatform(newMovie.rows[0].id, platform);
+                    });
+                    return [2 /*return*/, res.sendStatus(201)];
             }
-            MoviesRepository.insertMovie(movie);
-            return [2 /*return*/, res.sendStatus(201)];
         });
     });
 }
@@ -110,4 +118,19 @@ function deleteUnique(req, res) {
         });
     });
 }
-export { insertUnique, listAll, updateUnique, deleteUnique };
+function listMoviesByPlatform(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var id, filteredMovies;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    id = req.params.id;
+                    return [4 /*yield*/, MoviesRepository.getMoviesByStreamingPlatform(parseInt(id))];
+                case 1:
+                    filteredMovies = _a.sent();
+                    return [2 /*return*/, res.status(200).send({ Movies: filteredMovies.rows })];
+            }
+        });
+    });
+}
+export { insertUnique, listAll, updateUnique, deleteUnique, listMoviesByPlatform, };

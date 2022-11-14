@@ -39,7 +39,7 @@ import connection from "../database/db.js";
 function insertMovie(movie) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, connection.query("INSERT INTO movies (name, genre)\n    VALUES($1, $2);", [movie.name, movie.genre])];
+            return [2 /*return*/, connection.query("INSERT INTO movies (name, genre, platforms)\n    VALUES($1, $2, $3) RETURNING id;", [movie.name, movie.genre, movie.platforms])];
         });
     });
 }
@@ -47,7 +47,7 @@ function insertMovie(movie) {
 function getAllMovies() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, connection.query("SELECT * FROM movies ORDER BY id;")];
+            return [2 /*return*/, connection.query("\n    SELECT m.id, m.name, g.id as \"genreId\", g.name as \"genre\", p.id as \"platformId\", p.name as \"platform\", m.created_at\n    FROM movie_platforms mp\n    RIGHT JOIN movies m ON m.id = mp.movie_id\n    INNER JOIN platforms p ON p.id = mp.platform_id\n    LEFT JOIN genres g ON g.id = m.genre\n    GROUP BY m.id, p.id, p.name, g.id, g.name\n    ORDER BY m.id;")];
         });
     });
 }
@@ -67,4 +67,18 @@ function deleteMovie(id) {
         });
     });
 }
-export { insertMovie, getAllMovies, updateMovie, deleteMovie };
+function addMovieIntoPlatform(movie_id, platform_id) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, connection.query("INSERT INTO movie_platforms (movie_id, platform_id) VALUES ($1,$2);", [movie_id, platform_id])];
+        });
+    });
+}
+function getMoviesByStreamingPlatform(platformId) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, connection.query(" SELECT m.id, m.name, g.id as \"genreId\", g.name as \"genre\", p.id as \"platformId\", p.name as \"platform\", m.created_at\n    FROM movie_platforms mp\n    RIGHT JOIN movies m ON m.id = mp.movie_id\n    INNER JOIN platforms p ON p.id = mp.platform_id\n    LEFT JOIN genres g ON g.id = m.genre\n    WHERE p.id = $1\n    GROUP BY m.id, p.id, p.name, g.id, g.name\n    ORDER BY m.id;", [platformId])];
+        });
+    });
+}
+export { insertMovie, getAllMovies, updateMovie, deleteMovie, addMovieIntoPlatform, getMoviesByStreamingPlatform, };

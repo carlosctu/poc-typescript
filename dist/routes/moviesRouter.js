@@ -6,7 +6,5 @@ moviesRouter.post("/movies", MoviesController.insertUnique);
 moviesRouter.put("/movies/:id", MoviesController.updateUnique);
 moviesRouter["delete"]("/movies/:id", MoviesController.deleteUnique);
 moviesRouter.post("/movies/watch/:id");
-//moviesRouter.get("/movies/genre=id", (res: Response, req: Request) => {
-//return console.log("oi");
-//});
+moviesRouter.get("/movies/platform/:id", MoviesController.listMoviesByPlatform);
 export default moviesRouter;
